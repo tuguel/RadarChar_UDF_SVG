@@ -2,13 +2,11 @@
 Radar Chart UDF + SVG + DAX
 # Dynamic Radar Charts for Power BI
 
-# Dynamic Radar Charts for Power BI
-
 **Fully dynamic Radar Charts in Power BI using only DAX + SVG + UDF**
 
 A flexible solution that automatically generates Radar Charts with any number of nodes (3 to 8), concentric rings, axis guides, and smart auto-rotated labels.
 
-![Data Pills Logo](DataPills-Logo.png)
+![Data Pills Logo](DataPills-Logo.svg)
 
 ## Features
 
@@ -68,6 +66,7 @@ In the `Measures.txt` file you will find:
 EdgeHexColour = "#101080"   // Border color
 AreaHexColour = "#00D4C6"   // Fill color
 ## How to add to your existing PBIX
+```
 
 - Use the **TMDL** file (`Table&Measure.TMDL`) to import the table and measures.
 - Or manually copy the functions from `UDF4Radar.txt` and the measure from `Measures.txt`.
