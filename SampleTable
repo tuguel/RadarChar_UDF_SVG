@@ -1,0 +1,56 @@
+// =======================
+// Create a New DAX TABLE
+// =======================
+ProfileScores = 
+DATATABLE (
+    "Property", STRING,
+    "Sorting",  INTEGER,
+    "Category", STRING,
+    "Review",   DOUBLE,
+    {
+        // ArQ Hotel - 8 nodos
+        { "ArQ Hotel", 1, "Communication", 4.5 },
+        { "ArQ Hotel", 2, "Pet Friendly",  3.2 },
+        { "ArQ Hotel", 3, "Cleanliness",   4.0 },
+        { "ArQ Hotel", 4, "Location",      3.8 },
+        { "ArQ Hotel", 5, "Check-in",      4.2 },
+        { "ArQ Hotel", 6, "Amenities",     3.9 },
+        { "ArQ Hotel", 7, "Price/Value",   4.1 },
+        { "ArQ Hotel", 8, "Bonuses",       2.8 },
+
+        // Royal Inn - 7 nodos
+        { "Royal Inn", 1, "Communication", 4.5 },
+        { "Royal Inn", 2, "Cleanliness",   4.0 },
+        { "Royal Inn", 3, "Location",      3.5 },
+        { "Royal Inn", 4, "Check-in",      4.2 },
+        { "Royal Inn", 5, "Amenities",     3.8 },
+        { "Royal Inn", 6, "Price/Value",   4.1 },
+        { "Royal Inn", 7, "Complements",   3.9 },
+
+        // Up Resort - 6 nodos
+        { "Up Resort", 1, "Communication", 3.8 },
+        { "Up Resort", 2, "Cleanliness",   5.0 },
+        { "Up Resort", 3, "Location",      4.2 },
+        { "Up Resort", 4, "Check-in",      3.5 },
+        { "Up Resort", 5, "Amenities",     4.8 },
+        { "Up Resort", 6, "Price/Value",   4.5 },
+
+        // York Rent - 5 nodos
+        { "York Rent", 1, "Communication", 4.0 },
+        { "York Rent", 2, "Cleanliness",   4.5 },
+        { "York Rent", 3, "Location",      4.8 },
+        { "York Rent", 4, "Check-in",      5.0 },
+        { "York Rent", 5, "Amenities",     3.5 },
+
+        // Zap Hotel - 4 nodos
+        { "Zap Hotel", 1, "Communication", 3.5 },
+        { "Zap Hotel", 2, "Cleanliness",   5.0 },
+        { "Zap Hotel", 3, "Location",      4.5 },
+        { "Zap Hotel", 4, "Amenities",     3.8 },
+
+        // Zoom Park - 3 nodos (para probar N mínimo)
+        { "Zoom Park", 1, "Communication", 4.2 },
+        { "Zoom Park", 2, "Cleanliness",   3.0 },
+        { "Zoom Park", 3, "Location",      4.8 }
+    }
+)
