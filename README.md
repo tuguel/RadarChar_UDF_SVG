@@ -37,7 +37,7 @@ A flexible and ready-to-use solution that automatically generates Radar Charts w
 
 ## Preview
 
-![Dynamic Radar Charts](RadarChart.PNG)  
+![Dynamic Radar Charts](RadarChart.png)  
 *(3, 4, 5, 6, 7 and 8 nodes)*
 
 ## How to add to your existing PBIX
