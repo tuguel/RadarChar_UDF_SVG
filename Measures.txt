@@ -1,0 +1,30 @@
+//===========================================
+// Measures Needed For Colors Radar Plotting
+//===========================================
+DEFINE
+    MEASURE '🧮Measures'[AreaHexColour] = "#00D4C6"
+    MEASURE '🧮Measures'[EdgeHexColour] = "#101080"
+    MEASURE '🧮Measures'[SVGRadar] = 
+      VAR AttrGroup =
+          SUMMARIZE(
+              ALLSELECTED(ProfileScores), -- Replace Atttributes Table
+              ProfileScores[Category]     -- Replace Atttributes Field
+          )
+      VAR SubTable =
+          ADDCOLUMNS(
+              SELECTCOLUMNS(AttrGroup, "Attribute", ProfileScores[Category]),
+              "Score", [NodeScore],
+              "Order", [NodeOrder]
+          )
+      RETURN SVGradarFromTable(SubTable,[EdgeHexColour],[AreaHexColour])
+          MEASURE '🧮Measures'[NodeOrder] = MAX(ProfileScores[Sorting])
+          MEASURE '🧮Measures'[NodeScore] = MAX(ProfileScores[Review])
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        "AreaHexColour", [AreaHexColour],
+        "EdgeHexColour", [EdgeHexColour],
+        "SVGRadar", [SVGRadar],
+        "NodeOrder", [NodeOrder],
+        "NodeScore", [NodeScore]
+    )
