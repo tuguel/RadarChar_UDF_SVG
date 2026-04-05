@@ -1,0 +1,155 @@
+// =======================================
+// FULL CODE FOR SAMPLE TABLE AND MEASURE
+//  <please remove this 4 comment lines>
+// =======================================
+createOrReplace
+
+	table 🧮Measures
+		lineageTag: dbc6f22d-007c-4ca8-83f6-0c79a5d31655
+
+		measure AreaHexColour = "#00D4C6"
+			displayFolder: Misc.
+			lineageTag: 03b6fe7a-b256-4f7b-845a-e5bd1db88b2d
+
+		measure EdgeHexColour = "#101080"
+			displayFolder: Misc.
+			lineageTag: c15050cb-d76d-4d2f-8d45-e76798150b12
+
+		measure SVGRadar =
+				
+				VAR AttrGroup =
+				    SUMMARIZE(
+				        ALLSELECTED(ProfileScores), -- Replace Atttributes Table
+				        ProfileScores[Category]     -- Replace Atttributes Field
+				    )
+				VAR SubTable =
+				    ADDCOLUMNS(
+				        SELECTCOLUMNS(AttrGroup, "Attribute", ProfileScores[Category]),
+				        "Score", [NodeScore],
+				        "Order", [NodeOrder]
+				    )
+				RETURN SVGradarFromTable(SubTable,[EdgeHexColour],[AreaHexColour])
+			lineageTag: a89d2bc9-d495-46b8-9548-85be2a56afe7
+			dataCategory: ImageUrl
+
+		measure NodeOrder = MAX(ProfileScores[Sorting])
+			formatString: 0
+			lineageTag: 9f15deb2-fe0b-4f46-a21e-df6c2e56a60a
+
+		measure NodeScore = MAX(ProfileScores[Review])
+			lineageTag: 2caf6e4e-0d3b-4618-8426-cf74fc1b6c37
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column Dummy
+			formatString: 0
+			lineageTag: 5ff87131-455b-4a3e-9e28-ba023f1ad1ce
+			summarizeBy: sum
+			isNameInferred
+			sourceColumn: [Dummy]
+
+			annotation SummarizationSetBy = Automatic
+
+		partition 🧮Measures = calculated
+			mode: import
+			source = Row("Dummy", BLANK())
+
+		annotation PBI_Id = 48527c4dd0e345a0b6cc3f77cc8fff9a
+
+	table ProfileScores
+		lineageTag: 0ff9bb0b-c6dc-4fb0-a8ff-60c5a116c237
+
+		column Category
+			lineageTag: 96d290dc-83cb-4092-9310-bc08919fbc45
+			summarizeBy: none
+			isNameInferred
+			sourceColumn: [Category]
+
+			annotation SummarizationSetBy = Automatic
+
+		column Sorting
+			formatString: 0
+			lineageTag: e803c063-53f6-4c94-a3e4-e66077532ae3
+			summarizeBy: sum
+			isNameInferred
+			sourceColumn: [Sorting]
+
+			annotation SummarizationSetBy = Automatic
+
+		column Review
+			lineageTag: 542e3438-296a-4a39-adb4-14de9b2bd3ff
+			summarizeBy: sum
+			isNameInferred
+			sourceColumn: [Review]
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column Property
+			lineageTag: 23cb8ac3-0dd2-45db-8255-2360e0a2f743
+			summarizeBy: none
+			isNameInferred
+			sourceColumn: [Property]
+
+			annotation SummarizationSetBy = Automatic
+
+		partition ProfileScores = calculated
+			mode: import
+			source =
+					
+					DATATABLE (
+					    "Property", STRING,
+					    "Sorting",  INTEGER,
+					    "Category", STRING,
+					    "Review",   DOUBLE,
+					    {
+					        // ArQ Hotel - 8 nodos
+					        { "ArQ Hotel", 1, "Communication", 4.5 },
+					        { "ArQ Hotel", 2, "Pet Friendly",  3.2 },
+					        { "ArQ Hotel", 3, "Cleanliness",   4.0 },
+					        { "ArQ Hotel", 4, "Location",      3.8 },
+					        { "ArQ Hotel", 5, "Check-in",      4.2 },
+					        { "ArQ Hotel", 6, "Amenities",     3.9 },
+					        { "ArQ Hotel", 7, "Price/Value",   4.1 },
+					        { "ArQ Hotel", 8, "Bonuses",       2.8 },
+					
+					        // Royal Inn - 7 nodos
+					        { "Royal Inn", 1, "Communication", 4.5 },
+					        { "Royal Inn", 2, "Cleanliness",   4.0 },
+					        { "Royal Inn", 3, "Location",      3.5 },
+					        { "Royal Inn", 4, "Check-in",      4.2 },
+					        { "Royal Inn", 5, "Amenities",     3.8 },
+					        { "Royal Inn", 6, "Price/Value",   4.1 },
+					        { "Royal Inn", 7, "Complements",   3.9 },
+					
+					        // Up Resort - 6 nodos
+					        { "Up Resort", 1, "Communication", 3.8 },
+					        { "Up Resort", 2, "Cleanliness",   5.0 },
+					        { "Up Resort", 3, "Location",      4.2 },
+					        { "Up Resort", 4, "Check-in",      3.5 },
+					        { "Up Resort", 5, "Amenities",     4.8 },
+					        { "Up Resort", 6, "Price/Value",   4.5 },
+					
+					        // York Rent - 5 nodos
+					        { "York Rent", 1, "Communication", 4.0 },
+					        { "York Rent", 2, "Cleanliness",   4.5 },
+					        { "York Rent", 3, "Location",      4.8 },
+					        { "York Rent", 4, "Check-in",      5.0 },
+					        { "York Rent", 5, "Amenities",     3.5 },
+					
+					        // Zap Hotel - 4 nodos
+					        { "Zap Hotel", 1, "Communication", 3.5 },
+					        { "Zap Hotel", 2, "Cleanliness",   5.0 },
+					        { "Zap Hotel", 3, "Location",      4.5 },
+					        { "Zap Hotel", 4, "Amenities",     3.8 },
+					
+					        // Zoom Park - 3 nodos (para probar N mínimo)
+					        { "Zoom Park", 1, "Communication", 4.2 },
+					        { "Zoom Park", 2, "Cleanliness",   3.0 },
+					        { "Zoom Park", 3, "Location",      4.8 }
+					    }
+					)
+
+		annotation PBI_Id = 59b3d2acc4d34b23905b96e729cb53d1
+
