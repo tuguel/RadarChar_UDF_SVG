@@ -6,7 +6,7 @@ Radar Chart UDF + SVG + DAX
 
 A flexible and ready-to-use solution that automatically generates Radar Charts with any number of nodes (3 to 8), concentric rings, axis guides, and smart auto-rotated labels.
 
-![Data Pills Logo](DataPills.svg)
+![Data Pills Logo](DataPills-Logo.svg)
 
 ## Features
 
