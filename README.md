@@ -65,9 +65,9 @@ In the `Measures.txt` file you will find:
 ```dax
 EdgeHexColour = "#101080"   // Border color
 AreaHexColour = "#00D4C6"   // Fill color
-## How to add to your existing PBIX
 ```
 
+## How to add to your existing PBIX
 - Use the **TMDL** file (`Table&Measure.TMDL`) to import the table and measures.
 - Or manually copy the functions from `UDF4Radar.txt` and the measure from `Measures.txt`.
 
