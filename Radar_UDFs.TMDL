@@ -1,0 +1,206 @@
+createOrReplace
+
+	function Radar_Guides =
+			(
+			        _N:     int64,
+			        _RMax:  decimal,
+			        _CX:    decimal,
+			        _CY:    decimal
+			    ) =>
+					VAR HalfN = INT(DIVIDE(_N, 2, 0))
+					VAR CxTxt = FORMAT(_CX, "0", "en-US")
+					VAR CyTxt = FORMAT(_CY, "0", "en-US")
+					VAR GuidesEven =
+						CONCATENATEX(
+							GENERATESERIES(1, HalfN, 1),
+							VAR k  = [Value]
+							VAR P1 = Radar_PointXY(k,         _N, _RMax, _CX, _CY)
+							VAR P2 = Radar_PointXY(k + HalfN, _N, _RMax, _CX, _CY)
+							VAR P1Norm = SUBSTITUTE(P1, ",", ".")
+							VAR P2Norm = SUBSTITUTE(P2, ",", ".")
+							VAR DotPos1 = FIND(".", P1Norm)
+							VAR X1 = IF(DotPos1 = -1, P1Norm, LEFT(P1Norm, DotPos1 - 1))
+							VAR Y1 = IF(DotPos1 = -1, "", MID(P1Norm, DotPos1 + 1, 100))
+							VAR DotPos2 = FIND(".", P2Norm)
+							VAR X2 = IF(DotPos2 = -1, P2Norm, LEFT(P2Norm, DotPos2 - 1))
+							VAR Y2 = IF(DotPos2 = -1, "", MID(P2Norm, DotPos2 + 1, 100))
+							RETURN
+								"<line x1='" & X1 & "' y1='" & Y1 &
+								"' x2='" & X2 & "' y2='" & Y2 &
+								"' class='guide'/>",
+							""
+						)
+					VAR GuidesOdd =
+						CONCATENATEX(
+							GENERATESERIES(1, _N, 1),
+							VAR k  = [Value]
+							VAR Pv = Radar_PointXY(k, _N, _RMax, _CX, _CY)
+							VAR PvNorm = SUBSTITUTE(Pv, ",", ".")
+							VAR DotPos = FIND(".", PvNorm)
+							VAR X2 = IF(DotPos = -1, PvNorm, LEFT(PvNorm, DotPos - 1))
+							VAR Y2 = IF(DotPos = -1, "", MID(PvNorm, DotPos + 1, 100))
+							RETURN
+								"<line x1='" & CxTxt & "' y1='" & CyTxt &
+								"' x2='" & X2 & "' y2='" & Y2 &
+								"' class='guide'/>",
+							""
+						)
+					RETURN
+						IF( MOD(_N, 2) = 0, GuidesEven, GuidesOdd )
+		lineageTag: e8f6092b-0625-4792-b41c-d49776f216e3
+
+	function Radar_LabelAuto =
+			(
+			        _Ord: int64,
+			        _N:   int64,
+			        _Text: string,
+			        _ROuter: decimal,
+			        _CX: decimal,
+			        _CY: decimal
+			    ) =>
+					VAR AngleDeg = -90 + (_Ord - 1) * (360 / _N)
+					VAR A = ROUND(RADIANS(AngleDeg), 10)
+					VAR Pad = 3
+					VAR XRaw = _CX + (_ROuter - Pad) * COS(A)
+					VAR YRaw = _CY + (_ROuter - Pad) * SIN(A)
+					VAR X = ROUND(XRaw, 0)
+					VAR Y = ROUND(YRaw, 0)
+					VAR RotPerp = AngleDeg + 90
+					VAR RotNorm = MOD(RotPerp + 180, 360) - 180
+					VAR RotAdjusted = IF(ABS(RotNorm) > 90, RotNorm - 180 * SIGN(RotNorm), RotNorm)
+					VAR Rot6 =
+						SWITCH(_Ord,
+							2,  55,
+							3, -55,
+							5,  55,
+							6, -55,
+							0
+						)
+					VAR IsN4  = MOD(_N, 4) = 0
+					VAR Q     = INT(DIVIDE(_N, 4, 0))
+					VAR OrdRt = 1 + Q
+					VAR OrdLf = 1 + 3 * Q
+					VAR Rot =
+						SWITCH(TRUE(),
+							_N = 6, Rot6,
+							IsN4 && _Ord = OrdRt,  90,
+							IsN4 && _Ord = OrdLf, -90,
+							_N IN {5,7}, RotAdjusted,
+							TRUE, MIN(55, MAX(-55, RotAdjusted))
+						)
+					VAR XFmt = FORMAT(X, "0", "en-US")
+					VAR YFmt = FORMAT(Y, "0", "en-US")
+					RETURN
+						"<text x='" & XFmt & "' y='" & YFmt &
+						"' text-anchor='middle' dominant-baseline='middle' " &
+						"transform='rotate(" & FORMAT(Rot,"0") & " " & XFmt & " " & YFmt & ")'>" &
+						_Text & "</text>"
+		lineageTag: 131cafde-24f6-4f15-8c07-9f34d017db36
+
+	function Radar_PointXY =
+			(
+			        _Ord: int64,
+			        _N:   int64,
+			        _R:   decimal,
+			        _CX:  decimal,
+			        _CY:  decimal
+			    ) =>
+					VAR AngDeg = -90 + (_Ord - 1) * (360 / _N)
+					VAR Rad = ROUND(RADIANS(AngDeg), 10)
+					VAR X = _CX + _R * COS(Rad)
+					VAR Y = _CY + _R * SIN(Rad)
+					RETURN FORMAT(X,"0") & "," & FORMAT(Y,"0")
+		lineageTag: 524a916b-5aae-41b0-8d67-922f550c2085
+
+	function Radar_RingPath =
+			(
+			        _N: int64,
+			        _R: decimal,
+			        _CX: decimal,
+			        _CY: decimal
+			    ) =>
+					VAR Seq = GENERATESERIES(1, _N, 1)
+					VAR First = Radar_PointXY(1, _N, _R, _CX, _CY)
+					VAR Rest =
+						CONCATENATEX(
+							Seq,
+							VAR k = [Value]
+							RETURN IF(k=1, BLANK(), " L " & Radar_PointXY(k, _N, _R, _CX, _CY)),
+							""
+						)
+					RETURN "M " & First & Rest & " Z"
+		lineageTag: ada1f191-7fad-4edb-b637-f858717c1ee9
+
+	function SVGradarFromTable =
+			(
+			        _Nodes:   table,
+			        _EdgeHex: string,
+			        _FillHex: string
+			    ) =>
+					VAR CX = 100
+					VAR CY = 100
+					VAR _Levels = 5
+					VAR RMin = 25
+					VAR RStep = 11
+					VAR ROuter = RMin + RStep * _Levels + 12
+					VAR NodesClean   = FILTER(_Nodes, NOT ISBLANK([Score]))
+					VAR NodesLimited = TOPN(8, NodesClean, [Attribute], ASC)
+					VAR WithSort =
+						ADDCOLUMNS(
+							NodesLimited,
+							"OrdSafe", INT(ROUND([Order],0)),
+							"SortKey",
+								COALESCE(INT(ROUND([Order],0)), 1000000) * 100000
+								+ RANKX(NodesLimited, [Attribute], , ASC, DENSE)
+						)
+					VAR WithOrd =
+						ADDCOLUMNS(
+							WithSort,
+							"Ord", RANKX(WithSort, [SortKey], , ASC, DENSE)
+						)
+					VAR N = MAX(3, COUNTROWS(WithOrd))
+					VAR Points =
+						CONCATENATEX(
+							WithOrd,
+							VAR ord = [Ord]
+							VAR scr = COALESCE([Score], 0)
+							VAR r   = RMin + RStep * scr
+							RETURN Radar_PointXY(ord, N, r, CX, CY),
+							" ",
+							[Ord], ASC
+						)
+					VAR Rings =
+						CONCATENATEX(
+							GENERATESERIES(1, _Levels, 1),
+							VAR lvl = [Value]
+							VAR r   = RMin + RStep * lvl
+							RETURN "<path d='" & Radar_RingPath(N, r, CX, CY) & "' class='hexag'/>",
+							""
+						)
+					VAR RMax   = RMin + RStep * _Levels
+					VAR Guides = Radar_Guides(N, RMax, CX, CY)
+					VAR Labels =
+						CONCATENATEX(
+							WithOrd,
+							Radar_LabelAuto([Ord], N, [Attribute], ROuter, CX, CY),
+							"",
+							[Ord], ASC
+						)
+					VAR Fill = IF(ISBLANK(_FillHex), "#00D4C6", _FillHex)
+					VAR Edge = IF(ISBLANK(_EdgeHex), "#101080", _EdgeHex)
+					VAR SVGHeader =
+						"data:image/svg+xml;utf8," &
+						"<svg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'>"
+					VAR StyleBlock =
+						"<style>" &
+						".hexag{fill:none;stroke:#9c9999;shape-rendering:geometricPrecision;}" &
+						".prof1{fill:" & Fill & ";fill-opacity:0.40;stroke:" & Edge & ";stroke-width:2;vector-effect:non-scaling-stroke;}" &
+						".guide{stroke:#9c9999;stroke-dasharray:2;shape-rendering:geometricPrecision;}" &
+						"text{font-family:Arial,sans-serif;font-size:10px;fill:black;}" &
+						"</style>"
+					VAR Polygon = "<polygon points='" & Points & "' class='prof1'/>"
+					VAR _Tail   = "</svg>"
+					RETURN
+						SVGHeader & StyleBlock & Rings & Guides & Labels & Polygon & _Tail
+		lineageTag: 1df06848-682c-4416-81b0-cb1b6d2b24ce
+
