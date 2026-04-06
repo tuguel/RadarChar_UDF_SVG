@@ -1,5 +1,3 @@
-# RadarChar_UDF_SVG
-Radar Chart UDF + SVG + DAX
 # Dynamic Radar Charts for Power BI
 
 **Fully dynamic Radar Charts in Power BI using only DAX + SVG + UDF**
@@ -19,14 +17,18 @@ A flexible solution that automatically generates Radar Charts with any number of
 ## Repository Files
 
 | File                    | Description |
-|-------------------------|-----------|
-| `Radar.PBIX`            | Ready-to-use Power BI file (recommended) |
-| `Table&Measure.TMDL`    | TMDL script to create `ProfileScores` table and measures |
-| `UDF4Radar.txt`         | All User-Defined Functions |
-| `SampleTable.txt`       | Sample data for `ProfileScores` table |
-| `Measures.txt`          | Color measures + `SVGRadar` |
+|-------------------------|----------------------------------------------------|
+| `Radar.pbix`            | Ready-to-use Power BI file (recommended)           |
+| `Table&Measure.TMDL`    | TMDL script with sample table + all measures       |
+| `Radar_UDFs.TMDL`       | All User-Defined Functions (TMDL format)           |
+| `SampleTable.txt`       | Optional DAX code for sample table                 |
+| `Measures.txt`          | Optional DAX code for measures                     |
 
-## Quick Start
+## Prerequisites
+
+- **Power BI Desktop** version **2.120 or later** (required for full UDF and TMDL support)
+
+## Quick Start (Recommended)
 
 1. Download the **`Radar.PBIX`** file
 2. Open it in Power BI Desktop
@@ -39,37 +41,23 @@ A flexible solution that automatically generates Radar Charts with any number of
 ![Dynamic Radar Charts](RadarChart.png)  
 *(3, 4, 5, 6, 7 and 8 nodes)*
 
-## How to Configure the Button Slicer Visual
+## How to add to your existing PBIX
 
-To display the different profiles as buttons:
+1. Open your PBIX file
+2. Switch to **TMDL View** (click the TMDL icon on the left sidebar)
+3. Paste the content of **`Radar_UDFs.TMDL`** and click **Apply changes**
+4. Paste the content of **`Table&Measure.TMDL`** and click **Apply changes**
+5. Go to **Report View** and build your visualization:
+   - Add a **Button Slicer** visual and use the `[Property]` field
+   - Add an **Image** visual (or Card) and place the `SVGRadar` measure in the Image Field
+   - Set **Image Fit** to **Stretch**
 
-1. Add a **Button Slicer** visual to the canvas.
-2. In the **Fields** pane, drag the `[Property]` field from the `ProfileScores` table into the **Field** bucket.
-3. Go to **Format** > **Layout** and set:
-   - **Arrangement** → `Grid`
-   - **Style** → `Tiles`
-   - **Max rows shown** → `2`
-   - **Columns shown** → `3`
-4. Go to **Format** > **Images** and set:
-   - **Field** → `SVGRadar`
-   - **Image fit** → `Stretch`
-   - **Transparency** → `0%`
-   - **Saturation** → `100%`
-   - **Blur** → `0%`
-   - **Set as background** → `Off`
-
-## Default Colors (easy to change)
-
-In the `Measures.txt` file you will find:
+## Default Colors
 
 ```dax
+AreaHexColour = "#00D4C6"   // Fill color of the radar area
 EdgeHexColour = "#101080"   // Border color
-AreaHexColour = "#00D4C6"   // Fill color
 ```
-
-## How to add to your existing PBIX
-- Use the **TMDL** file (`Table&Measure.TMDL`) to import the table and measures.
-- Or manually copy the functions from `UDF4Radar.txt` and the measure from `Measures.txt`.
 
 ## Author
 **Miguel Madriz** – Data Pills Series
